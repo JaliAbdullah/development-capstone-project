@@ -34,6 +34,39 @@ def get_request(endpoint, **kwargs):
 # Add code for retrieving sentiments
 
 def analyze_review_sentiments(text):
+    # Simple keyword-based sentiment analysis
+    text_lower = text.lower()
+    
+    # Positive keywords
+    positive_words = [
+        'excellent', 'great', 'amazing', 'fantastic', 'wonderful', 'awesome', 'good', 'best', 
+        'love', 'perfect', 'outstanding', 'superb', 'brilliant', 'nice', 'satisfied', 'happy',
+        'recommend', 'professional', 'friendly', 'helpful', 'fast', 'quick', 'efficient',
+        'clean', 'comfortable', 'smooth', 'easy', 'reliable', 'trustworthy', 'quality'
+    ]
+    
+    # Negative keywords  
+    negative_words = [
+        'terrible', 'awful', 'bad', 'worst', 'horrible', 'disappointing', 'poor', 'slow',
+        'rude', 'unprofessional', 'dirty', 'expensive', 'overpriced', 'broken', 'problem',
+        'issue', 'complaint', 'angry', 'frustrated', 'disappointed', 'unsatisfied', 'hate',
+        'never', 'avoid', 'scam', 'fraud', 'cheated', 'waste', 'regret'
+    ]
+    
+    positive_count = sum(1 for word in positive_words if word in text_lower)
+    negative_count = sum(1 for word in negative_words if word in text_lower)
+    
+    if positive_count > negative_count:
+        sentiment = 'positive'
+    elif negative_count > positive_count:
+        sentiment = 'negative'
+    else:
+        sentiment = 'neutral'
+    
+    return {'sentiment': sentiment}
+
+# Original function (fallback to external service)
+def analyze_review_sentiments_external(text):
     request_url = sentiment_analyzer_url+"analyze/"+text
     try:
         # Call get method of requests library with URL and parameters
@@ -47,7 +80,7 @@ def analyze_review_sentiments(text):
 # Add code for posting review
 
 def post_review(data_dict):
-    request_url = backend_url+"/insert_review"
+    request_url = backend_url+"/reviews"
     try:
         response = requests.post(request_url,json=data_dict)
         print(response.json())

@@ -106,9 +106,16 @@ def get_dealer_reviews(request, dealer_id):
         endpoint = "/fetchReviews/dealer/"+str(dealer_id)
         reviews = get_request(endpoint)
         for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
+            try:
+                response = analyze_review_sentiments(review_detail['review'])
+                print(f"Sentiment analysis for '{review_detail['review']}': {response}")
+                if response and 'sentiment' in response:
+                    review_detail['sentiment'] = response['sentiment']
+                else:
+                    review_detail['sentiment'] = 'neutral'  # Default sentiment
+            except Exception as e:
+                print(f"Sentiment analysis failed: {e}")
+                review_detail['sentiment'] = 'neutral'  # Default sentiment
         return JsonResponse({"status":200,"reviews":reviews})
     else:
         return JsonResponse({"status":400,"message":"Bad Request"})
@@ -131,15 +138,16 @@ def get_dealer_details(request, dealer_id):
 
 @csrf_exempt
 def add_review(request):
-    if(request.user.is_anonymous == False):
+    if request.method == 'POST':
         data = json.loads(request.body)
         try:
             response = post_review(data)
             return JsonResponse({"status":200})
-        except:
+        except Exception as e:
+            print(f"Error posting review: {e}")
             return JsonResponse({"status":401,"message":"Error in posting review"})
     else:
-        return JsonResponse({"status":403,"message":"Unauthorized"})
+        return JsonResponse({"status":405,"message":"Method not allowed"})
 
 def get_cars(request):
     count = CarMake.objects.filter().count()
