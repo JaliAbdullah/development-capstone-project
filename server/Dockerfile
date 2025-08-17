@@ -1,26 +1,30 @@
-FROM python:3.12.0-slim-bookworm
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV APP=/app
 
 # Set work directory
-WORKDIR $APP
+WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt $APP/
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project
-COPY . $APP/
+COPY . .
 
-# Make entrypoint executable
-RUN chmod +x /app/entrypoint.sh
+# Collect static files and run migrations
+RUN python manage.py collectstatic --noinput || true
+RUN python manage.py migrate --noinput || true
 
 # Expose port
 EXPOSE 8000
 
-# Run entrypoint script and start gunicorn
-ENTRYPOINT ["/bin/bash", "/app/entrypoint.sh"]
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "djangoproj.wsgi:application"]
+# Start gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "djangoproj.wsgi:application"]
