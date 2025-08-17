@@ -1,0 +1,61 @@
+# Exclude ALL node_modules directories globally - most comprehensive patterns
+node_modules
+node_modules/
+node_modules/**
+node_modules/**/*
+node_modules/**/*.js
+**/node_modules
+**/node_modules/
+**/node_modules/**
+**/node_modules/**/*
+**/node_modules/**/*.js
+*/node_modules/
+*/node_modules/**
+*/node_modules/**/*
+./node_modules/**
+./node_modules/**/*
+./node_modules/**/*.js
+
+# Specific project node_modules paths
+server/database/node_modules/
+server/database/node_modules/**
+server/database/node_modules/**/*
+server/frontend/node_modules/
+server/frontend/node_modules/**
+server/frontend/node_modules/**/*
+server/node_modules/**
+
+# Python virtual environment
+djangoenv/
+djangoenv/**
+
+# All build artifacts and minified files
+*.min.js
+*.min.css
+*.bundle.js
+*.chunk.js
+build/
+dist/
+coverage/
+out/
+tmp/
+.nyc_output/
+lib-cov/
+static/
+
+# System and config files
+.git/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.env
+.env.*
+package-lock.json
+yarn.lock
+
+# Frontend build outputs
+server/frontend/build/
+server/frontend/static/
+frontend/build/
+frontend/node_modules/
