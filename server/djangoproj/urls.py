@@ -18,13 +18,11 @@ from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 from django.conf.urls.static import static
 from django.conf import settings
-from django.views.static import serve
-import os
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djangoapp/', include('djangoapp.urls')),
-    
+
     # Serve React build files
     path('', TemplateView.as_view(template_name="index.html")),
     path('about/', TemplateView.as_view(template_name="index.html")),
@@ -32,18 +30,24 @@ urlpatterns = [
     path('login/', TemplateView.as_view(template_name="index.html")),
     path('register/', TemplateView.as_view(template_name="index.html")),
     path('dealers/', TemplateView.as_view(template_name="index.html")),
-    path('dealer/<int:dealer_id>', TemplateView.as_view(template_name="index.html")),
-    path('postreview/<int:dealer_id>', TemplateView.as_view(template_name="index.html")),
-    
+    path('dealer/<int:dealer_id>',
+         TemplateView.as_view(template_name="index.html")),
+    path('postreview/<int:dealer_id>',
+         TemplateView.as_view(template_name="index.html")),
+
     # Catch all other routes and serve index.html for React Router
     re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
 ]
 
 # Serve static files
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
 else:
     # Production static file serving
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

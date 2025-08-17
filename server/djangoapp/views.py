@@ -37,7 +37,9 @@ def login_user(request):
         return JsonResponse(data)
     except Exception as e:
         logger.error(f"Login error: {str(e)}")
-        return JsonResponse({"error": "Login failed", "message": str(e)}, status=500)
+        return JsonResponse(
+            {"error": "Login failed", "message": str(e)}, status=500
+        )
 
 
 # Create a `logout_request` view to handle sign out request
@@ -82,7 +84,9 @@ def registration(request):
             return JsonResponse(data)
     except Exception as e:
         logger.error(f"Registration error: {str(e)}")
-        return JsonResponse({"error": "Registration failed", "message": str(e)}, status=500)
+        return JsonResponse(
+            {"error": "Registration failed", "message": str(e)}, status=500
+        )
 
 
 # Update the `get_dealerships` view to render the index page with
@@ -102,7 +106,10 @@ def get_dealerships(request, state="All"):
         return JsonResponse({"status": 200, "dealers": dealerships})
     except Exception as e:
         logger.error(f"Get dealerships error: {str(e)}")
-        return JsonResponse({"error": "Failed to fetch dealerships", "message": str(e)}, status=500)
+        return JsonResponse(
+            {"error": "Failed to fetch dealerships", "message": str(e)},
+            status=500
+        )
 
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
