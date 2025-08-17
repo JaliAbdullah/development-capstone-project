@@ -10,8 +10,8 @@ if [ -d "frontend" ]; then
     echo "Building frontend..."
     cd frontend
     
-    # Install Node.js dependencies
-    npm ci --only=production
+    # Install Node.js dependencies (including dev dependencies for build)
+    npm ci
     
     # Build the React app
     npm run build
@@ -20,6 +20,14 @@ if [ -d "frontend" ]; then
     cd ..
     
     echo "Frontend build completed."
+    
+    # Debug: List the contents of the build directory
+    if [ -d "frontend/build" ]; then
+        echo "Build directory contents:"
+        ls -la frontend/build/
+    else
+        echo "ERROR: frontend/build directory not found after build!"
+    fi
 fi
 
 # Collect static files

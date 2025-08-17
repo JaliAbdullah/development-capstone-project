@@ -25,14 +25,65 @@ def index(request):
         index_path = os.path.join(
             settings.BASE_DIR, 'frontend', 'build', 'index.html'
         )
+        
+        # Debug logging for production
+        logger.info(f"Looking for index.html at: {index_path}")
+        logger.info(f"BASE_DIR is: {settings.BASE_DIR}")
+        logger.info(f"Current working directory: {os.getcwd()}")
+        
+        # Check if directories exist
+        frontend_dir = os.path.join(settings.BASE_DIR, 'frontend')
+        build_dir = os.path.join(settings.BASE_DIR, 'frontend', 'build')
+        
+        logger.info(f"Frontend directory exists: {os.path.exists(frontend_dir)}")
+        logger.info(f"Build directory exists: {os.path.exists(build_dir)}")
+        
+        if os.path.exists(build_dir):
+            build_contents = os.listdir(build_dir)
+            logger.info(f"Build directory contents: {build_contents}")
 
         # Check if the file exists
         if os.path.exists(index_path):
+            logger.info("index.html found successfully")
             with open(index_path, 'r', encoding='utf-8') as file:
                 return HttpResponse(file.read(), content_type='text/html')
         else:
             logger.error(f"index.html not found at {index_path}")
-            return HttpResponse("React app not found", status=404)
+            
+            # Try alternative paths
+            alt_paths = [
+                os.path.join(settings.BASE_DIR, 'build', 'index.html'),
+                os.path.join(settings.BASE_DIR, 'staticfiles', 'index.html'),
+                os.path.join(os.getcwd(), 'frontend', 'build', 'index.html'),
+                os.path.join(os.getcwd(), 'build', 'index.html'),
+            ]
+            
+            for alt_path in alt_paths:
+                logger.info(f"Checking alternative path: {alt_path}")
+                if os.path.exists(alt_path):
+                    logger.info(f"Found index.html at alternative path: {alt_path}")
+                    with open(alt_path, 'r', encoding='utf-8') as file:
+                        return HttpResponse(file.read(), content_type='text/html')
+            
+            return HttpResponse(
+                f"""
+                <html>
+                <head><title>Debug Info</title></head>
+                <body>
+                    <h1>React App Not Found - Debug Information</h1>
+                    <p><strong>Searched paths:</strong></p>
+                    <ul>
+                        <li>{index_path}</li>
+                        {''.join(f'<li>{path}</li>' for path in alt_paths)}
+                    </ul>
+                    <p><strong>BASE_DIR:</strong> {settings.BASE_DIR}</p>
+                    <p><strong>Current working directory:</strong> {os.getcwd()}</p>
+                    <p><strong>Environment:</strong> {'Production' if not settings.DEBUG else 'Development'}</p>
+                </body>
+                </html>
+                """,
+                status=404
+            )
     except Exception as e:
         logger.error(f"Error serving React app: {str(e)}")
         return HttpResponse(f"Error loading app: {str(e)}", status=500)
