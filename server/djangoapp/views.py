@@ -2,12 +2,14 @@
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-
-from django.http import JsonResponse
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import login, authenticate
 import logging
 import json
+import os
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from .models import CarMake, CarModel
 from .populate import initiate
 from .restapis import get_request, analyze_review_sentiments, post_review
@@ -17,7 +19,22 @@ from .restapis import get_request, analyze_review_sentiments, post_review
 logger = logging.getLogger(__name__)
 
 
-# Create your views here.
+# Create a view to serve the React app
+def index(request):
+    try:
+        # Path to the index.html file
+        index_path = os.path.join(settings.BASE_DIR, 'frontend', 'build', 'index.html')
+        
+        # Check if the file exists
+        if os.path.exists(index_path):
+            with open(index_path, 'r', encoding='utf-8') as file:
+                return HttpResponse(file.read(), content_type='text/html')
+        else:
+            logger.error(f"index.html not found at {index_path}")
+            return HttpResponse("React app not found", status=404)
+    except Exception as e:
+        logger.error(f"Error serving React app: {str(e)}")
+        return HttpResponse(f"Error loading app: {str(e)}", status=500)
 
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
