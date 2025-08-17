@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: djangoapp
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn djangoproj.wsgi:application"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: "3.11.0"
