@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: database
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: database
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: database
+    spec:
+      containers:
+      - image: jali007/database:latest
+        imagePullPolicy: Always
+        name: database
+        ports:
+        - containerPort: 3030
+          protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+spec:
+  selector:
+    run: database
+  ports:
+    - protocol: TCP
+      port: 3030
+      targetPort: 3030
+  type: ClusterIP
