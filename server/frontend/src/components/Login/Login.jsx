@@ -37,7 +37,7 @@ const Login = ({ onClose }) => {
 
   if (!open) {
     window.location.href = "/";
-  };
+  }
   
 
   return (
