@@ -2,7 +2,6 @@
 
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import login, authenticate
 import logging
@@ -23,8 +22,10 @@ logger = logging.getLogger(__name__)
 def index(request):
     try:
         # Path to the index.html file
-        index_path = os.path.join(settings.BASE_DIR, 'frontend', 'build', 'index.html')
-        
+        index_path = os.path.join(
+            settings.BASE_DIR, 'frontend', 'build', 'index.html'
+        )
+
         # Check if the file exists
         if os.path.exists(index_path):
             with open(index_path, 'r', encoding='utf-8') as file:
@@ -35,6 +36,7 @@ def index(request):
     except Exception as e:
         logger.error(f"Error serving React app: {str(e)}")
         return HttpResponse(f"Error loading app: {str(e)}", status=500)
+
 
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
