@@ -16,6 +16,16 @@ node_modules/**/*.js
 ./node_modules/**/*
 ./node_modules/**/*.js
 
+# Exclude React/JSX files and frontend
+server/frontend/
+server/frontend/**
+server/frontend/**/*
+server/frontend/src/
+server/frontend/src/**
+server/frontend/src/**/*
+*.jsx
+**/*.jsx
+
 # Specific project node_modules paths
 server/database/node_modules/
 server/database/node_modules/**

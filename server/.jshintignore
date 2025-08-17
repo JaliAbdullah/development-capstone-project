@@ -12,6 +12,16 @@ node_modules/**/*.js
 ./node_modules/**
 ./node_modules/**/*
 
+# Exclude React/JSX frontend
+frontend/
+frontend/**
+frontend/**/*
+frontend/src/
+frontend/src/**
+frontend/src/**/*
+*.jsx
+**/*.jsx
+
 # Database and frontend node_modules
 database/node_modules/
 database/node_modules/**
