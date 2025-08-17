@@ -22,18 +22,22 @@ logger = logging.getLogger(__name__)
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
-    # Get username and password from request.POST dictionary
-    data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    # Try to check if provide credential can be authenticated
-    user = authenticate(username=username, password=password)
-    data = {"userName": username}
-    if user is not None:
-        # If user is valid, call login method to login current user
-        login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
+    try:
+        # Get username and password from request.POST dictionary
+        data = json.loads(request.body)
+        username = data['userName']
+        password = data['password']
+        # Try to check if provide credential can be authenticated
+        user = authenticate(username=username, password=password)
+        data = {"userName": username}
+        if user is not None:
+            # If user is valid, call login method to login current user
+            login(request, user)
+            data = {"userName": username, "status": "Authenticated"}
+        return JsonResponse(data)
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}")
+        return JsonResponse({"error": "Login failed", "message": str(e)}, status=500)
 
 
 # Create a `logout_request` view to handle sign out request
@@ -46,35 +50,39 @@ def logout_request(request):
 # Create a `registration` view to handle sign up request
 @csrf_exempt
 def registration(request):
-    # Load JSON data from the request body
-    data = json.loads(request.body)
-    username = data['userName']
-    password = data['password']
-    first_name = data['firstName']
-    last_name = data['lastName']
-    email = data['email']
-    username_exist = False
     try:
-        # Check if user already exists
-        User.objects.get(username=username)
-        username_exist = True
-    except User.DoesNotExist:
-        # If not, simply log this is a new user
-        logger.debug("{} is new user".format(username))
+        # Load JSON data from the request body
+        data = json.loads(request.body)
+        username = data['userName']
+        password = data['password']
+        first_name = data['firstName']
+        last_name = data['lastName']
+        email = data['email']
+        username_exist = False
+        try:
+            # Check if user already exists
+            User.objects.get(username=username)
+            username_exist = True
+        except User.DoesNotExist:
+            # If not, simply log this is a new user
+            logger.debug("{} is new user".format(username))
 
-    # If it is a new user
-    if not username_exist:
-        # Create user in auth_user table
-        user = User.objects.create_user(
-            username=username, first_name=first_name, last_name=last_name,
-            password=password, email=email)
-        # Login the user and redirect to list page
-        login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-        return JsonResponse(data)
-    else:
-        data = {"userName": username, "error": "Already Registered"}
-        return JsonResponse(data)
+        # If it is a new user
+        if not username_exist:
+            # Create user in auth_user table
+            user = User.objects.create_user(
+                username=username, first_name=first_name, last_name=last_name,
+                password=password, email=email)
+            # Login the user and redirect to list page
+            login(request, user)
+            data = {"userName": username, "status": "Authenticated"}
+            return JsonResponse(data)
+        else:
+            data = {"userName": username, "error": "Already Registered"}
+            return JsonResponse(data)
+    except Exception as e:
+        logger.error(f"Registration error: {str(e)}")
+        return JsonResponse({"error": "Registration failed", "message": str(e)}, status=500)
 
 
 # Update the `get_dealerships` view to render the index page with
@@ -85,12 +93,16 @@ def registration(request):
 # Update the `get_dealerships` render list of dealerships all by default,
 # particular state if state is passed
 def get_dealerships(request, state="All"):
-    if state == "All":
-        endpoint = "/fetchDealers"
-    else:
-        endpoint = "/fetchDealers/" + state
-    dealerships = get_request(endpoint)
-    return JsonResponse({"status": 200, "dealers": dealerships})
+    try:
+        if state == "All":
+            endpoint = "/fetchDealers"
+        else:
+            endpoint = "/fetchDealers/" + state
+        dealerships = get_request(endpoint)
+        return JsonResponse({"status": 200, "dealers": dealerships})
+    except Exception as e:
+        logger.error(f"Get dealerships error: {str(e)}")
+        return JsonResponse({"error": "Failed to fetch dealerships", "message": str(e)}, status=500)
 
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer

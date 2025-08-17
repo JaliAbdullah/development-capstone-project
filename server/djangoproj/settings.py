@@ -28,6 +28,28 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ccow$tz_=9%dxu4(0%^(z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 't')
 
+# Enable logging for production debugging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
+
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '*']
 if 'RENDER' in os.environ:
     ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
@@ -71,9 +93,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-                os.path.join(BASE_DIR, 'frontend/static'),
-                os.path.join(BASE_DIR, 'frontend/build'),
-                os.path.join(BASE_DIR, 'frontend/build/static'),
+            os.path.join(BASE_DIR, 'frontend/build'),
+            os.path.join(BASE_DIR, 'frontend/static'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -144,8 +165,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # WhiteNoise configuration
@@ -157,7 +178,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend/build/static'),
     os.path.join(BASE_DIR, 'frontend/static'),
-    os.path.join(BASE_DIR, 'frontend/build'),
-    os.path.join(BASE_DIR, 'frontend/build/static')
 ]
+
+# Allow serving of index.html and other React files
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
