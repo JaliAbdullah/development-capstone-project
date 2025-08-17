@@ -1,0 +1,8 @@
+{
+  "build": {
+    "builder": "DOCKERFILE"
+  },
+  "deploy": {
+    "startCommand": "gunicorn --bind :$PORT --workers 3 djangoproj.wsgi"
+  }
+}
