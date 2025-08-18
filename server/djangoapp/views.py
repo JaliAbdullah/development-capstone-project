@@ -48,7 +48,13 @@ def index(request):
         if os.path.exists(index_path):
             logger.info("index.html found successfully")
             with open(index_path, 'r', encoding='utf-8') as file:
-                return HttpResponse(file.read(), content_type='text/html')
+                content = file.read()
+                # Ensure static files are served correctly
+                response = HttpResponse(content, content_type='text/html')
+                response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response['Pragma'] = 'no-cache'
+                response['Expires'] = '0'
+                return response
         else:
             logger.error(f"index.html not found at {index_path}")
 
@@ -71,9 +77,12 @@ def index(request):
                         f"Found index.html at alternative path: {alt_path}"
                     )
                     with open(alt_path, 'r', encoding='utf-8') as file:
-                        return HttpResponse(
-                            file.read(), content_type='text/html'
-                        )
+                        content = file.read()
+                        response = HttpResponse(content, content_type='text/html')
+                        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                        response['Pragma'] = 'no-cache'
+                        response['Expires'] = '0'
+                        return response
 
             return HttpResponse(
                 f"""

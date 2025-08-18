@@ -17,7 +17,9 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.static import serve
 from djangoapp.views import index
+import os
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +34,11 @@ urlpatterns = [
     path('dealers/', index, name='dealers'),
     path('dealer/<int:dealer_id>', index, name='dealer_detail'),
     path('postreview/<int:dealer_id>', index, name='post_review'),
+
+    # Serve static files from React build
+    re_path(r'^static/(?P<path>.*)$', serve, {
+        'document_root': os.path.join(settings.BASE_DIR, 'frontend', 'build', 'static'),
+    }),
 
     # Catch all other routes and serve index.html for React Router
     re_path(r'^.*$', index, name='catch_all'),

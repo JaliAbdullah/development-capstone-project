@@ -25,9 +25,21 @@ if [ -d "frontend" ]; then
     if [ -d "frontend/build" ]; then
         echo "Build directory contents:"
         ls -la frontend/build/
+        echo "Static directory contents:"
+        ls -la frontend/build/static/
     else
         echo "ERROR: frontend/build directory not found after build!"
     fi
+fi
+
+# Collect static files for Django
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
+
+# Debug: List the contents of staticfiles directory
+if [ -d "staticfiles" ]; then
+    echo "Staticfiles directory contents:"
+    ls -la staticfiles/
 fi
 
 # Collect static files
