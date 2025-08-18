@@ -37,7 +37,9 @@ urlpatterns = [
 
     # Serve static files from React build
     re_path(r'^static/(?P<path>.*)$', serve, {
-        'document_root': os.path.join(settings.BASE_DIR, 'frontend', 'build', 'static'),
+        'document_root': os.path.join(
+            settings.BASE_DIR, 'frontend', 'build', 'static'
+        ),
     }),
 
     # Catch all other routes and serve index.html for React Router

@@ -51,7 +51,9 @@ def index(request):
                 content = file.read()
                 # Ensure static files are served correctly
                 response = HttpResponse(content, content_type='text/html')
-                response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response['Cache-Control'] = (
+                    'no-cache, no-store, must-revalidate'
+                )
                 response['Pragma'] = 'no-cache'
                 response['Expires'] = '0'
                 return response
@@ -78,8 +80,12 @@ def index(request):
                     )
                     with open(alt_path, 'r', encoding='utf-8') as file:
                         content = file.read()
-                        response = HttpResponse(content, content_type='text/html')
-                        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                        response = HttpResponse(
+                            content, content_type='text/html'
+                        )
+                        response['Cache-Control'] = (
+                            'no-cache, no-store, must-revalidate'
+                        )
                         response['Pragma'] = 'no-cache'
                         response['Expires'] = '0'
                         return response
